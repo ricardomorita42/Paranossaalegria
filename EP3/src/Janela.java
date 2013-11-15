@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.text.AbstractDocument.Content;
 
 public class Janela extends JFrame {
 	/**
@@ -14,6 +15,7 @@ public class Janela extends JFrame {
 	private Arena mapa;
 	private int larguraTela = 1024;
 	private int alturaTela = 800;
+	private Font defaultFont;
 	private TexturePaint txtbase;
 	private TexturePaint txtbase2;
 	private TexturePaint txtplanicie;
@@ -33,6 +35,8 @@ public class Janela extends JFrame {
 		
 		setBackground(Color.BLACK);
 		setVisible(true);
+		
+		defaultFont = new Font("Monospace", Font.BOLD, 14);
 	}
 	
 	/*	LEGENDA
@@ -49,6 +53,8 @@ public class Janela extends JFrame {
 		checkPaint = false;
 		
 		Graphics2D g2d = (Graphics2D) g;
+		g2d.setFont(defaultFont);
+		
 		int w = mapa.getMapWidth();
 		int h = mapa.getMapHeight();
 		int x0 = 100, y = 100, r = 30;
@@ -120,6 +126,9 @@ public class Janela extends JFrame {
 						img = icon.getImage();
 						//g2d.setColor(Color.PINK);
 						g2d.drawImage(img, x-lado, y-r, 52, 60, null);
+						g2d.setColor(Color.WHITE);
+						
+						g2d.drawString(String.valueOf(((Robo)entidade).getVida()), x-(int)(r/2), y+(int)(r/2));
 					}
 					
 					else if (entidade instanceof Cristal){

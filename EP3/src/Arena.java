@@ -13,7 +13,7 @@ public class Arena implements Empilhavel{
 	//Mapa prototipo de dimensoes 10 x 10
 	private int[][] prototipo = {
 								{0,0,0,2,2,2,2,2,2,2},
-								{0,0,0,2,2,2,2,4,2,3},
+								{0,0,1,2,2,2,2,4,2,3},
 								{0,0,0,2,3,2,2,2,4,2},
 								{2,2,2,2,2,5,5,2,2,2},
 								{2,2,2,3,2,2,5,2,2,2},
@@ -79,6 +79,9 @@ public class Arena implements Empilhavel{
 	public void insereExercito(Instrucao[] programa, Base base) {
 		Random rand = new Random();
 		
+		Robo novoRobo = new Robo();
+		Config config = new Config();
+		
 		Terreno celula = null;
 		int i, comp;
 		
@@ -90,23 +93,28 @@ public class Arena implements Empilhavel{
 				celula = listaBase1.get(i);
 				//Enquanto a posição sorteada for um terreno Ocupado, Sorteie outra posição.
 			} while (celula.terrenoOcupado());
+			
+			novoRobo.setVida(100);
+			novoRobo.setDano(25);
 		}
+		
 		else if (base instanceof Base2) {
 			comp = listaBase2.size();
 			
 			do {
-				i = rand.nextInt(comp);
+				i = rand.nextInt(1/*comp*/);
 				celula = listaBase2.get(i);
 				//Enquanto a posição sorteada for um terreno Ocupado, Sorteie outra posição.
 			} while (celula.terrenoOcupado());
+			
+			novoRobo.setVida(50);
+			novoRobo.setDano(25);
 		}
-
 		
-		Robo novoRobo = new Robo();
-		Config config = new Config();
 		novoRobo.setNome(config.nomesRobos()[rand.nextInt(config.nomesRobos().length)]);
 		novoRobo.setPrograma(programa);
 		novoRobo.setBase((Base)celula);
+		//novoRobo.setVida(100);
 		
 		/* a definir */
 		
@@ -195,6 +203,8 @@ public class Arena implements Empilhavel{
 					robo.setHasCristal(true); 
 					mapa[l][c].desocupaTerreno();
 				}
+				else
+					return 0;
 			}
 			else if (op.getAcao() == "depositar")
 			{
@@ -204,11 +214,26 @@ public class Arena implements Empilhavel{
 					robo.setHasCristal(false);
 					robo.setCristal(null);
 				}
-				
+				else
+					return 0;
 			}
 			else if (op.getAcao() == "atacar")
 			{
+				if ((mapa[l][c].terrenoOcupado()) && (mapa[l][c].getEntidade() instanceof Robo)) {
+					int dano = robo.getDano();
+					Robo alvo = ((Robo)mapa[l][c].getEntidade());
+					
+					alvo.setVida(alvo.getVida() - dano);
+					
+					if (alvo.getVida() <= 0) {
+						mapa[l][c].desocupaTerreno();
+						listaRobos.remove(alvo);
+					}
+
+				}
 				
+				else
+					return 0;
 			}
 		}
 		else

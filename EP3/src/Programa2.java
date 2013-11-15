@@ -46,7 +46,7 @@ public class Programa2 {
 		
 		programa[5] = new Instrucao();
 		programa[5].setInstrucao("SYS");
-		op = new Operacao("mover","direita","reto");
+		op = new Operacao("atacar","direita","reto");
 		programa[5].setOperando(op);
 		
 		programa[6] = new Instrucao();
@@ -55,7 +55,7 @@ public class Programa2 {
 		
 		programa[7] = new Instrucao();
 		programa[7].setInstrucao("SYS");
-		op = new Operacao("mover","direita","reto");
+		op = new Operacao("atacar","direita","reto");
 		programa[7].setOperando(op);
 		
 		programa[8] = new Instrucao();
@@ -64,7 +64,7 @@ public class Programa2 {
 		
 		programa[9] = new Instrucao();
 		programa[9].setInstrucao("SYS");
-		op = new Operacao("coletar","direita","baixo");
+		op = new Operacao("mover","direita","reto");
 		programa[9].setOperando(op);
 		
 		programa[10] = new Instrucao();
@@ -73,11 +73,29 @@ public class Programa2 {
 		
 		programa[11] = new Instrucao();
 		programa[11].setInstrucao("SYS");
-		op = new Operacao("depositar","esquerda","baixo");
+		op = new Operacao("mover","direita","reto");
 		programa[11].setOperando(op);
 		
 		programa[12] = new Instrucao();
-		programa[12].setInstrucao("END");
+		programa[12].setInstrucao("PUSH");
+		programa[12].setOperando(mapa);
+		
+		programa[13] = new Instrucao();
+		programa[13].setInstrucao("SYS");
+		op = new Operacao("coletar","direita","baixo");
+		programa[13].setOperando(op);
+		
+		programa[14] = new Instrucao();
+		programa[14].setInstrucao("PUSH");
+		programa[14].setOperando(mapa);
+		
+		programa[15] = new Instrucao();
+		programa[15].setInstrucao("SYS");
+		op = new Operacao("depositar","esquerda","baixo");
+		programa[15].setOperando(op);
+		
+		programa[16] = new Instrucao();
+		programa[16].setInstrucao("END");
 
 		return programa;
 	}

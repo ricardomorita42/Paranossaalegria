@@ -9,6 +9,11 @@ public class Robo {
 	private Cristal cristal;
 	private boolean hasCristal = false;
 	
+	//ATRIBUTOS DO ROBO
+	private int vida;
+	private int dano;
+	private int ocupacao; //Implementar funcionamento
+	
 	public void setPrograma(Instrucao[] programa) {
 		this.maq = new MaquinaVirtual(programa);
 	}
@@ -65,6 +70,30 @@ public class Robo {
 
 	public void setHasCristal(boolean hasCristal) {
 		this.hasCristal = hasCristal;
+	}
+
+	public int getVida() {
+		return vida;
+	}
+
+	public void setVida(int vida) {
+		this.vida = vida;
+	}
+
+	public int getDano() {
+		return dano;
+	}
+
+	public void setDano(int dano) {
+		this.dano = dano;
+	}
+
+	public int getOcupacao() {
+		return ocupacao;
+	}
+
+	public void setOcupacao(int ocupacao) {
+		this.ocupacao = ocupacao;
 	}
 	
 }
