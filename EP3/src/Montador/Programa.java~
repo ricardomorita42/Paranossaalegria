@@ -1,0 +1,39 @@
+public class Programa {
+	public Instrucao[] getPrograma(Arena mapa) {
+		Instrucao[] programa = new Instrucao[512];
+
+		Numero num;
+		Texto txt;
+
+		programa[0] = new Instrucao();
+		programa[6].setLabel("INIC");
+		programa[0].setInstrucao("PUSH");
+		num = new Numero(10);
+		programa[0].setOperando(num);
+
+		programa[1] = new Instrucao();
+		programa[1].setInstrucao("PUSH");
+		num = new Numero(4);
+		programa[1].setOperando(num);
+
+		programa[2] = new Instrucao();
+		programa[2].setInstrucao("ADD");
+
+		programa[3] = new Instrucao();
+		programa[3].setInstrucao("PUSH");
+		num = new Numero(3);
+		programa[3].setOperando(num);
+
+		programa[4] = new Instrucao();
+		programa[4].setInstrucao("MUL");
+
+		programa[5] = new Instrucao();
+		programa[5].setInstrucao("PRN");
+
+		programa[6] = new Instrucao();
+		programa[6].setInstrucao("END");
+
+		programa[6].setInstrucao("END");
+		return programa;
+	}
+}
