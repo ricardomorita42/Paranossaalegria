@@ -35,7 +35,8 @@ public class Arena implements Empilhavel{
 	public Arena() {
 		mapa = new Terreno[NUM_LINHAS][NUM_COLUNAS];
 		
-		//Mudou-se o construtor para definir os tipos de terreno segundo o vetor acima
+		// O construtor Arena() é usado para definir os tipos de terreno
+		// seguindo o array acima;
 		for (int i = 0; i < NUM_LINHAS; i++)
 			for (int j = 0; j < NUM_COLUNAS; j++) {
 				if (prototipo[i][j] == 0)
@@ -69,6 +70,7 @@ public class Arena implements Empilhavel{
 		listaRobos = new ArrayList<Robo>();
 	}
 	
+	//Insere um cristal na posição (i,j)
 	public void insereCristal(int i, int j) {
 		Cristal novoCristal = new Cristal();
 		listaCristais.add(novoCristal);
@@ -76,6 +78,11 @@ public class Arena implements Empilhavel{
 		mapa[i][j].ocupaTerreno(novoCristal);
 	}
 	
+	/* Insere um exército com o (programa desejado) no time esco-
+	 * lhido. O padrão é de escolher aleatoriamente dentre a base,
+	 * entretanto, no momento estamos colocando o robô especifica-
+	 * damente em determinadas posições para facilitar o entendi-
+	 * mento do programa. */
 	public void insereExercito(Instrucao[] programa, Base base) {
 		Random rand = new Random();
 		
@@ -89,12 +96,13 @@ public class Arena implements Empilhavel{
 			comp = listaBase1.size();
 			
 			do {
-				i = rand.nextInt(1/*comp*/);
+				i = rand.nextInt(1/*comp*/); //Aleatório caso descomente comp
 				celula = listaBase1.get(i);
-				//Enquanto a posição sorteada for um terreno Ocupado, Sorteie outra posição.
+				// Enquanto a posição sorteada for um terreno Ocupado,
+				// Sorteie outra posição.
 			} while (celula.terrenoOcupado());
 			
-			novoRobo.setVida(1000);
+			novoRobo.setVida(300);
 			novoRobo.setDano(25);
 		}
 		
@@ -102,26 +110,29 @@ public class Arena implements Empilhavel{
 			comp = listaBase2.size();
 			
 			do {
-				i = rand.nextInt(1/*comp*/);
+				i = rand.nextInt(1/*comp*/); //Aleatório caso descomente comp
 				celula = listaBase2.get(i);
-				//Enquanto a posição sorteada for um terreno Ocupado, Sorteie outra posição.
+				// Enquanto a posição sorteada for um terreno Ocupado,
+				// Sorteie outra posição.
 			} while (celula.terrenoOcupado());
 			
 			novoRobo.setVida(100);
-			novoRobo.setDano(20);
+			novoRobo.setDano(75);
 		}
 		
 		novoRobo.setNome(config.nomesRobos()[rand.nextInt(config.nomesRobos().length)]);
 		novoRobo.setPrograma(programa);
 		novoRobo.setBase((Base)celula);
-		//novoRobo.setVida(100);
 		
-		/* a definir */
+		/* à definir os tipos de robôs */
 		
 		listaRobos.add(novoRobo);
 		celula.ocupaTerreno(novoRobo);
 	}
 	
+	/* Cada vez que atualiza() é chamada, um ciclo de cada robô
+	 * é executado;
+	 */
 	public void atualiza() {
 		for (int i = 0; i < listaRobos.size(); i++) {
 			if (!listaRobos.get(i).getMaq().execucaoFinalizada()) {
@@ -130,6 +141,8 @@ public class Arena implements Empilhavel{
 			}
 			else
 			{
+				// Um exemplo de mudança de programa em determinado robô que terminou todas
+				// suas instruções;
 				listaRobos.get(i).setPrograma((new Programa2()).getProgramaAttack2(this));
 				//listaRobos.remove(i);
 			}
@@ -137,22 +150,33 @@ public class Arena implements Empilhavel{
 		
 	}
 	
+	//Retorna se há robôs na lista;
 	public Boolean listaRobosVazia() {
 		return listaRobos.isEmpty();
 	}
 	
+	/* Usada quando o robô executa uma chamada ao sistema.
+	 * Chamadas implementadas:
+	 * [Mover, direção]
+	 * [Coletar, direção]
+	 * [Depositar, direção]
+	 * [Atacar, direção]
+	 */
 	public int sistema(Operacao op, Robo robo) {
-		//System.out.println(op.getAcao());
+		int isImpar = 0;
 		
-		//Posição de Origem do Robô
+		// Posição de origem do robô
 		int lo = robo.getLinha();
 		int co = robo.getColuna();
 		
-		int isImpar = 0;
-		
-		//Posição de Destino da Ação
+		// Posição de destino da ação executada pelo robô
 		int l, c;
 		
+		/* O trecho abaixo é usado para auxiliar no mapeamento
+		 * da direção dada numa matriz quadrada para uma direção
+		 * numa matriz hexagonal;
+		 */ 
+				
 		if (lo % 2 == 1)
 			isImpar = 1;
 		
@@ -171,19 +195,26 @@ public class Arena implements Empilhavel{
 			
 			if (op.getDirecao() == "esquerda")
 				c = co -1 + isImpar;
-			else //direita
+			else // "direita"
 				c = co + isImpar;
 		}
-		else //baixo
+		else // "baixo"
 		{
 			l = lo + 1;
 			
 			if (op.getDirecao() == "esquerda")
 				c = co - 1 + isImpar;
-			else //direita
+			else // "direita"
 				c = co + isImpar;
 		}
 		
+		/* Define as ações caso sejam válidas; 
+		 * Tipos de retorno:
+		 * 0 = Ação mal-sucedida (ex. tiro numa casa vazia)
+		 * 1 = Ação bem-sucedida
+		 * 2 = Nível de ocupação atualizado (esperando ocupação = 0 para
+		 * 	   execução da ação)
+		 */
 		if ((c >= 0 && c < NUM_COLUNAS) && (l >= 0 && l < NUM_LINHAS))
 		{
 			if (op.getAcao() == "mover")
@@ -280,7 +311,7 @@ public class Arena implements Empilhavel{
 					alvo.setVida(alvo.getVida() - dano);
 					
 					if (alvo.getVida() <= 0) {
-						mapa[l][c].desocupaTerreno();//AAAAKKIIII
+						mapa[l][c].desocupaTerreno();
 						
 						if (alvo.hasCristal())
 							mapa[l][c].ocupaTerreno(alvo.getCristal());
@@ -297,15 +328,12 @@ public class Arena implements Empilhavel{
 		else
 			return 0;
 		
-		/* [Mover, direção]
-		 * [Coletar, direção]
-		 * [Depositar, direção]
-		 * [Atacar, direção]
-		 * à definir*/
+
 		return 1;
 	}
 	
-	//Funções criadas abaixo na classe Janela
+	// Funções abaixo foram criadas para utilização nas
+	// classes de desenho;
 	public int getMapHeight() {
 		return NUM_COLUNAS;
 	}

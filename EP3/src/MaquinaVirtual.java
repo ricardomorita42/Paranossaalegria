@@ -153,7 +153,8 @@ public class MaquinaVirtual {
                     
                     robo.setAcaoAtual(((Operacao)obj2).getAcao());
                     
-                    // ret = 2 quando ocupacao != 0 (nao eh o turno dele)
+                    // retorna 2 quando ocupacao for != 0 (nao executa
+                    // ação);
                     if (ret == 2) {
                     	pilhaDados.Empilha((Empilhavel)obj1);
                     	ocupFlag = true;

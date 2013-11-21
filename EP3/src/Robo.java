@@ -12,7 +12,7 @@ public class Robo {
 	//ATRIBUTOS DO ROBO
 	private int vida;
 	private int dano;
-	private int ocupacao = 0; //Implementar funcionamento
+	private int ocupacao = 0;
 	private String acaoAtual = "";
 	
 	public void setPrograma(Instrucao[] programa) {
@@ -97,12 +97,11 @@ public class Robo {
 		this.ocupacao = ocupacao;
 	}
 
-	public void setAcaoAtual(String acaoAtual) {
-		this.acaoAtual = acaoAtual;
-	}
-
 	public String getAcaoAtual() {
 		return acaoAtual;
 	}
 	
+	public void setAcaoAtual(String acaoAtual) {
+		this.acaoAtual = acaoAtual;
+	}
 }

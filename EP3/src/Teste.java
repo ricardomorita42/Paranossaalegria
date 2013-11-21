@@ -1,20 +1,14 @@
 
 public class Teste {
 	
-	
+	/* Insere robôs nas bases, cada qual com um determinado programa de
+	 * teste.
+	 */
 	public static void main(String[] args) throws InterruptedException{
-
 		Programa2 teste;
-		
-		/*
-		teste = new Teste();
-		MaquinaVirtual maq = new MaquinaVirtual(teste.getPrograma());
-		while (!maq.execucaoFinalizada()) {
-			maq.executaInstrucao();
-		}*/
-		
-		
+			
 		Arena arenaPrincipal = new Arena();
+		
 		
 		for (int i = 0; i < 1; i++) {
 			teste = new Programa2();
@@ -28,11 +22,11 @@ public class Teste {
 		
 		Janela janela = new Janela("mapa", arenaPrincipal);
 		
+		// Enquanto houver robôs e instruções para serem executadas, 
+		// atualiza a arena;
 		while (!arenaPrincipal.listaRobosVazia())
 		{
-			Thread.sleep(500);
-			//janela.update(janela.getGraphics());
-			
+			Thread.sleep(500);		
 			arenaPrincipal.atualiza();
 			janela.repaint();
 		}

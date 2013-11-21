@@ -1,4 +1,3 @@
-import java.util.Vector;
 
 public class Programa2 {
 	
@@ -17,12 +16,14 @@ public class Programa2 {
 	final String BAIXO = "baixo";
 	final String RETO = "reto";
 	
+	// Define uma rota de teste que envolve andar, atacar,
+	// coletar e depositar;
 	public Instrucao[] getPrograma(Arena mapa) {
 		Instrucao[] programa = new Instrucao[512];
 		
 		Operacao op;
-		Numero num;
-		Texto txt;
+		//Numero num;
+		//Texto txt;
 		
 		int i = 0;
 
@@ -46,7 +47,7 @@ public class Programa2 {
 		op = new Operacao("mover","direita","baixo");
 		programa[i++].setOperando(op);
 		
-		programa[i] = new Instrucao();
+		/*programa[i] = new Instrucao();
 		programa[i].setLabel("LOOP");
 		programa[i].setInstrucao("PUSH");
 		programa[i++].setOperando(mapa);
@@ -59,7 +60,7 @@ public class Programa2 {
 		programa[i] = new Instrucao();
 		programa[i].setInstrucao("JIT");
 		txt = new Texto("LOOP");
-		programa[i++].setOperando(txt);
+		programa[i++].setOperando(txt);*/
 		
 		programa[i] = new Instrucao();
 		programa[i].setInstrucao("PUSH");
@@ -103,16 +104,16 @@ public class Programa2 {
 		return programa;
 	}
 	
+	//Ataca continuamente a posição [straight left];
 	public Instrucao[] getProgramaAttack(Arena mapa) {
 		Instrucao[] programa = new Instrucao[512];
 		
 		Operacao op;
-		Numero num;
+		//Numero num;
 		Texto txt;
 		
 		int i = 0;
 
-		
 		programa[i] = new Instrucao();
 		programa[i].setLabel("LOOP");
 		programa[i].setInstrucao("PUSH");
@@ -137,11 +138,12 @@ public class Programa2 {
 		return programa;
 	}
 	
+	//Ataca continuamente a posição [straight right];
 	public Instrucao[] getProgramaAttack2(Arena mapa) {
 		Instrucao[] programa = new Instrucao[512];
 		
 		Operacao op;
-		Numero num;
+		//Numero num;
 		Texto txt;
 		
 		int i = 0;
