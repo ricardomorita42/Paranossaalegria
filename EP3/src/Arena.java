@@ -13,7 +13,7 @@ public class Arena implements Empilhavel{
 	//Mapa prototipo de dimensoes 10 x 10
 	private int[][] prototipo = {
 								{0,0,0,2,2,2,2,2,2,2},
-								{0,0,1,2,2,2,2,4,2,3},
+								{0,0,0,2,1,2,2,4,2,3},
 								{0,0,0,2,3,2,2,2,4,2},
 								{2,2,2,2,2,5,5,2,2,2},
 								{2,2,2,3,2,2,5,2,2,2},
@@ -94,7 +94,7 @@ public class Arena implements Empilhavel{
 				//Enquanto a posição sorteada for um terreno Ocupado, Sorteie outra posição.
 			} while (celula.terrenoOcupado());
 			
-			novoRobo.setVida(100);
+			novoRobo.setVida(1000);
 			novoRobo.setDano(25);
 		}
 		
@@ -107,8 +107,8 @@ public class Arena implements Empilhavel{
 				//Enquanto a posição sorteada for um terreno Ocupado, Sorteie outra posição.
 			} while (celula.terrenoOcupado());
 			
-			novoRobo.setVida(50);
-			novoRobo.setDano(25);
+			novoRobo.setVida(100);
+			novoRobo.setDano(20);
 		}
 		
 		novoRobo.setNome(config.nomesRobos()[rand.nextInt(config.nomesRobos().length)]);
@@ -130,7 +130,8 @@ public class Arena implements Empilhavel{
 			}
 			else
 			{
-				listaRobos.remove(i);
+				listaRobos.get(i).setPrograma((new Programa2()).getProgramaAttack2(this));
+				//listaRobos.remove(i);
 			}
 		}
 		
@@ -187,35 +188,88 @@ public class Arena implements Empilhavel{
 		{
 			if (op.getAcao() == "mover")
 			{
-				if (mapa[l][c].terrenoOcupado())
-					return 0;
-				
-				mapa[lo][co].desocupaTerreno();
-				mapa[l][c].ocupaTerreno(robo);
-				robo.setLinha(l);
-				robo.setColuna(c);
+				if (robo.getOcupacao() == 0)
+				{
+					robo.setOcupacao(mapa[l][c].getOcupacao());
+					return 2;
+				}
+				else
+				{
+					robo.setOcupacao(robo.getOcupacao()-1);
+					
+					if (robo.getOcupacao() == 0) {
+						if (mapa[l][c].terrenoOcupado())
+							return 0;
+						
+						mapa[lo][co].desocupaTerreno();
+						mapa[l][c].ocupaTerreno(robo);
+						robo.setLinha(l);
+						robo.setColuna(c);
+					}
+					else
+						return 2;
+				}
 			}
 			else if (op.getAcao() == "coletar")
 			{
 				if ((mapa[l][c].terrenoOcupado()) && (mapa[l][c].getEntidade() instanceof Cristal) && !robo.hasCristal())
-				{
-					robo.setCristal((Cristal)mapa[l][c].getEntidade());
-					robo.setHasCristal(true); 
-					mapa[l][c].desocupaTerreno();
+				{		
+					if (robo.getOcupacao() == 0)
+					{
+						robo.setOcupacao(5);
+						return 2;
+					}
+					
+					else
+					{
+						robo.setOcupacao(robo.getOcupacao()-1);
+						
+						if (robo.getOcupacao() == 0)
+						{
+							robo.setCristal((Cristal)mapa[l][c].getEntidade());
+							robo.setHasCristal(true); 
+							mapa[l][c].desocupaTerreno();
+						}
+						
+						else
+							return 2;
+					}
 				}
 				else
 					return 0;
 			}
+			
 			else if (op.getAcao() == "depositar")
 			{
 				if ((!mapa[l][c].terrenoOcupado()) && robo.hasCristal()) //VERIFICAR CONDICOES DE TERRENO
 				{
-					mapa[l][c].ocupaTerreno(robo.getCristal());
-					robo.setHasCristal(false);
-					robo.setCristal(null);
+					if (robo.getOcupacao() == 0)
+						{
+							robo.setOcupacao(3);
+							return 2;
+						}
+						
+						else
+						{
+							robo.setOcupacao(robo.getOcupacao()-1);
+							
+							if (robo.getOcupacao() == 0)
+							{
+								mapa[l][c].ocupaTerreno(robo.getCristal());
+								robo.setHasCristal(false);
+								robo.setCristal(null);
+							}
+							
+							else
+								return 2;
+						}
+					
 				}
 				else
 					return 0;
+				
+				
+				
 			}
 			else if (op.getAcao() == "atacar")
 			{
@@ -226,7 +280,11 @@ public class Arena implements Empilhavel{
 					alvo.setVida(alvo.getVida() - dano);
 					
 					if (alvo.getVida() <= 0) {
-						mapa[l][c].desocupaTerreno();
+						mapa[l][c].desocupaTerreno();//AAAAKKIIII
+						
+						if (alvo.hasCristal())
+							mapa[l][c].ocupaTerreno(alvo.getCristal());
+						
 						listaRobos.remove(alvo);
 					}
 

@@ -42,5 +42,9 @@ public class Terreno {
 		return coluna;
 	}
 	
+	//Deve ser no minimo 1 segundo implementacao em Arena.java
+	public int getOcupacao() {
+		return 1;
+	}
 
 }

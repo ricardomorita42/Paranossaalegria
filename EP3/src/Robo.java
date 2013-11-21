@@ -12,7 +12,8 @@ public class Robo {
 	//ATRIBUTOS DO ROBO
 	private int vida;
 	private int dano;
-	private int ocupacao; //Implementar funcionamento
+	private int ocupacao = 0; //Implementar funcionamento
+	private String acaoAtual = "";
 	
 	public void setPrograma(Instrucao[] programa) {
 		this.maq = new MaquinaVirtual(programa);
@@ -94,6 +95,14 @@ public class Robo {
 
 	public void setOcupacao(int ocupacao) {
 		this.ocupacao = ocupacao;
+	}
+
+	public void setAcaoAtual(String acaoAtual) {
+		this.acaoAtual = acaoAtual;
+	}
+
+	public String getAcaoAtual() {
+		return acaoAtual;
 	}
 	
 }

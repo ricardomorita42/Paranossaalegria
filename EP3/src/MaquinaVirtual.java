@@ -34,6 +34,7 @@ public class MaquinaVirtual {
         String instrucaoAtual;
         if ((instrucaoAtual = this.retornaInstrucao().getInstrucao()) != "END") {
             Boolean jumpFlag = false;
+            Boolean ocupFlag = false;
             
             
             //Manipulação da Pilha
@@ -149,9 +150,20 @@ public class MaquinaVirtual {
                 if (obj1 instanceof Arena && obj2 instanceof Operacao) {
                     Arena mapa = (Arena)obj1;
                     int ret = mapa.sistema((Operacao)obj2, robo);
-                    Numero num = new Numero();
-                    num.setNum(ret);
-                    pilhaDados.Empilha(num);
+                    
+                    robo.setAcaoAtual(((Operacao)obj2).getAcao());
+                    
+                    // ret = 2 quando ocupacao != 0 (nao eh o turno dele)
+                    if (ret == 2) {
+                    	pilhaDados.Empilha((Empilhavel)obj1);
+                    	ocupFlag = true;
+                    }
+                    
+                    else {
+                    	Numero num = new Numero();
+                    	num.setNum(ret);
+                    	pilhaDados.Empilha(num);
+                    }
                 }
                 else
                     this.execucaoFinalizada = true;
@@ -272,7 +284,7 @@ public class MaquinaVirtual {
                     this.execucaoFinalizada = true;                
             }
             
-            if (!jumpFlag) ponteiroInstrucoes++;
+            if (!jumpFlag && !ocupFlag) ponteiroInstrucoes++;
         }
         else {
             this.execucaoFinalizada = true;

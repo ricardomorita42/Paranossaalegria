@@ -22,21 +22,19 @@ public class Teste {
 		}
 		
 		for (int i = 0; i < 1; i++) {
-			Programa teste2 = new Programa();
-			arenaPrincipal.insereExercito(teste2.getPrograma(arenaPrincipal), new Base2());
+			teste = new Programa2();
+			arenaPrincipal.insereExercito(teste.getProgramaAttack(arenaPrincipal), new Base2());
 		}
 		
 		Janela janela = new Janela("mapa", arenaPrincipal);
+		
 		while (!arenaPrincipal.listaRobosVazia())
 		{
-			Thread.sleep(50);
+			Thread.sleep(500);
+			//janela.update(janela.getGraphics());
 			
-			if (janela.hasFinishedPainting())
-			{
-				arenaPrincipal.atualiza();
-				//janela.repaint();
-				janela.update(janela.getGraphics());
-			}
+			arenaPrincipal.atualiza();
+			janela.repaint();
 		}
 		
 	}
