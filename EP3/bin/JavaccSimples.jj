@@ -1,0 +1,411 @@
+options {
+	IGNORE_CASE = true;
+	LOOKAHEAD   = 2;			// para eliminar conflitos
+}
+
+// Descrição da classe Calc
+PARSER_BEGIN(Compilador)
+import java.util.*;
+
+public class Compilador {
+	static Instrucao[] Prog;			 // programa
+	static int tam = 0;						 // tamanho do programa
+
+	public static void main(String args[]) throws ParseException {
+		Prog = null;
+		tam = 0;
+		Compilador parser = new Compilador(System.in); // cria o compilador
+		Prog = parser.Programa();		   // compila e retorna o código de máquina
+		
+		//Teste t = new Teste();
+		//t.Roda(Prog);
+	}
+}
+
+PARSER_END(Compilador)
+
+// Pula espaço em branco e comentários
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+|  <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
+|  <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
+}
+
+// Programa é o ponto de partida
+Instrucao[] Programa() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0); // para retornar
+	Vector<Instrucao> x = new Vector<Instrucao>(0); // trecho compilado
+													// por outras regras
+
+	Instrucao[] a = new Instrucao[0]; // auxiliar
+	Token t;
+	Numero num;
+	Texto txt;
+}
+{
+	(
+		x = Comando() {
+			//System.out.println(x.get(x.size()-1).getLabel());
+			p.addAll(x);
+		}
+	)*
+	<EOF> {
+		//p.add(new RET());		// para garantir que tem um RET
+		p.add(new Instrucao());
+		p.get(p.size()-1).setInstrucao("PRN");
+		
+		p.add(new Instrucao());
+		p.get(p.size()-1).setInstrucao("END");
+		
+		for (int i=0; i < p.size(); i++)
+		{
+			num = new Numero(0);
+			
+			if (p.get(i).getOperando() instanceof Numero)
+				num = (Numero)(p.get(i).getOperando());
+			
+			System.out.println(p.get(i).getInstrucao() + " " + Integer.toString(num.getNum()));
+		}
+		
+		return  p.toArray(a);
+	}
+}
+
+Vector<Instrucao> Comando() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	Token t;
+	Numero num;
+	Texto txt;
+}
+{
+	(
+	 x = Expressão() ";" {p.addAll(x);}
+	 |
+	 x = Condicional()   {}
+	 |
+	 x = Laço()		     {}
+	 |
+	 x = Função()		 {
+	 }
+	 | 
+	 "return" (x=Expressão() {})? ";" {}
+	 |
+	 "print" x=ListPrint() {} ";"
+	 |
+	 "println" ";"{
+		
+	 }
+	 ) {return p;}
+}
+
+// No nível mais baixo calcula as expressões lógicas
+Vector<Instrucao> Expressão() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	Numero num;
+	Texto txt;
+}
+{
+	x = Arit() {p.addAll(x);}
+	(
+	 "<=" x = Arit() {}
+	 |
+	 ">=" x = Arit() {}
+	 |
+	 "!=" x = Arit() {}
+	 |
+	 "==" x = Arit() {}
+	 |
+	 "<"  x = Arit() {}
+	 |
+	 ">"  x = Arit() {}
+	 )* {return p;}
+}
+
+// Artiméticas
+Vector<Instrucao> Arit() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	Numero num;
+	Texto txt;
+}
+{
+	x = Termo() {p.addAll(x);}
+	(
+	 "+" x = Termo() {
+		 x.add(new Instrucao());
+		 int i = x.size()-1;
+		 x.get(i).setInstrucao("ADD");
+		 p.addAll(x);
+	 }
+	 |
+	 "-" x = Termo() {
+		 x.add(new Instrucao());
+		 int i = x.size()-1;
+		 x.get(i).setInstrucao("SUB");
+		 p.addAll(x);
+	 }
+	 )* {return p;}
+}
+
+Vector<Instrucao> Termo() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	Numero num;
+	Texto txt;
+}
+{
+	x = Fator() { p.addAll(x); }
+	(
+	 "*" x = Fator() {
+		 x.add(new Instrucao());
+		 int i = x.size()-1;
+		 x.get(i).setInstrucao("MUL");
+		 p.addAll(x);
+	 }
+	 |
+	 "/" x = Fator() {
+		 x.add(new Instrucao());
+		 int i = x.size()-1;
+		 x.get(i).setInstrucao("DIV");
+		 p.addAll(x);
+	 }
+	 )* {return p;}
+}
+
+Vector<Instrucao> Fator() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	Token t;
+	Numero num;
+	Texto txt;
+}
+{
+	x=Chamada() {				// Chamada de função
+		return p;
+	}
+|								// Atribuição
+	 t=<ID> "=" x=Expressão() {	
+		return p;
+	}
+	|
+	t=<ID> {
+		p.add(new Instrucao());
+		p.get(p.size()-1).setLabel(t.image);
+		
+		return p;
+	}
+|
+	t=<NUM> {
+		p.add(new Instrucao());
+		int i = p.size()-1;
+		p.get(i).setInstrucao("PUSH");
+		num = new Numero(Integer.parseInt(t.image));
+		p.get(i).setOperando(num);
+		
+		return p;
+	}
+|
+    "(" x = Expressão() ")"	{
+		return p;
+	}
+}
+
+Vector<Instrucao> Condicional() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	int delta, pos;
+}
+{
+	("if" | "se") 
+    "(" 
+		x=Expressão() {} 
+	")" 
+	("then" | "então")
+	x = Bloco() {}
+	( 
+	 ("else" | "senão" )
+	 x = Bloco() {} 
+	  )?
+		{ return p; }
+}
+
+Vector<Instrucao> Laço() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	int exp, delta;
+}
+{
+	( "while" | "enquanto" )
+	"("x = Expressão() {}
+	")" 
+    ( "do" | "faça" ) 
+	  x = Bloco() {
+		return p;
+	}
+}
+
+Vector<Instrucao> Bloco() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+}
+{
+	"" //TESTETETTETE
+	{
+		return p;
+	}
+}
+
+
+
+
+	// Definição de função
+Vector<Instrucao> Função() :
+{
+	Vector<Instrucao> p = new Vector<Instrucao>(0);
+	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	Token t;
+}
+{
+	"func" t=<ID> {}
+	"(" /*(Args(nome,v))?*/ ")"		// lista de argumentos
+	x=Bloco() 					// corpo
+	{
+		return p;
+	}
+}
+
+	// Argumentos
+	void Args(/*String fnom, Função v*/) :
+	{
+	}
+	{
+		""
+		//Arg(fnom,v)	( ","	 Arg(fnom,v) )*
+	}
+
+	// Um argumento
+	void Arg(/*String fnom, Função f*/) :
+	{
+		Token t;
+	}
+	{
+		t=<ID> {
+		}
+	}
+
+	// Chamada de função
+	Vector<Instrucao> Chamada() :
+	{
+		Vector<Instrucao> p = new Vector<Instrucao>(0);
+		Vector<Instrucao> x = new Vector<Instrucao>(0);
+		Token t;
+	}
+	{
+	    t=<ID> {}
+		"("
+			//x=ListParms(f) {p.addAll(x);} // lista de parâmetros
+		")" 
+	    {
+			return p;
+		}
+	}
+
+	// Parâmetros
+	Vector<Instrucao> ListParms(/*Função f*/) :
+	{
+		Vector<Instrucao> p = new Vector<Instrucao>(0);
+		Vector<Instrucao> x = new Vector<Instrucao>(0);
+		Token t;
+		int n = 0;
+		String pnom;
+	}
+	{
+		//x = Parm(f,n++) {p.addAll(x); } // compila cada argumento
+		
+		(
+		 ","
+		 //x = Parm(f,n++) {p.addAll(x);}
+		)*
+		{ 
+			return p;
+		}
+	}
+
+	// Um argumento
+	Vector<Instrucao> Parm(/*Função f, int n*/) :
+	{
+		Vector<Instrucao> p = new Vector<Instrucao>(0);
+		Vector<Instrucao> x = new Vector<Instrucao>(0);
+	}
+	{
+		x = Expressão() {
+			return p;
+		}
+		
+	}
+
+	// Lista para impressão
+	Vector<Instrucao> ListPrint() :
+	{
+		Vector<Instrucao> p = new Vector<Instrucao>(0);
+		Vector<Instrucao> x = new Vector<Instrucao>(0);
+	}
+	{
+		x=ItemPrint() {
+			p.addAll(x);
+		}
+		
+		(
+		 ","
+		 x=ItemPrint() {
+			 p.addAll(x);
+		 }
+		)*
+		{ return p;}
+	}
+
+	// Um ítem a ser impresso
+	Vector<Instrucao> ItemPrint() :
+	{
+		Vector<Instrucao> p = new Vector<Instrucao>(0);
+		Vector<Instrucao> x = new Vector<Instrucao>(0);
+		Token t;
+	}
+	{
+		(
+		 x=Expressão() {
+		 }
+		 |
+		 t=<STRING_LITERAL> {}
+		)
+		{ return p;}
+	}
+
+	// Definição dos tokens
+	TOKEN :
+	{
+	 < NUM: ( ["0"-"9"] )+ >
+	|
+	 < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9","@"] )* >
+	|
+	  <STRING_LITERAL: "\"" ( ~["\"","\\","\n","\r"] | "\\" ( ["n","t","b","r","f","\\","\'","\""] | ["0"-"7"] (["0"-"7"])?  | ["0"-"3"] ["0"-"7"] ["0"-"7"] | ( ["\n","\r"] | "\r\n")))* "\"">
+
+	}
+
+
+

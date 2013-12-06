@@ -16,7 +16,7 @@ public class Janela extends JFrame{
 		super(nome);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(larguraTela, alturaTela);
-		setResizable(false);
+		//setResizable(true);
 		setContentPane(new Painel(mapa));
 		add(new PainelEntidades(mapa));
 			
