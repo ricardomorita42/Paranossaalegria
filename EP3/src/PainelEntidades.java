@@ -15,6 +15,7 @@ public class PainelEntidades extends JPanel {
 		setPreferredSize(new Dimension(Painel.larguraTela, Painel.alturaTela));
 		setBackground(new Color(255,255,255,0));
 		setVisible(true);
+		setOpaque(false);
 		defaultFont = new Font("Monospace", Font.BOLD, 14);
 		
 		setDoubleBuffered(true);

@@ -2,26 +2,24 @@ import java.util.Random;
 import java.util.ArrayList;
 
 public class Arena implements Empilhavel{
-	private final int NUM_LINHAS = 10;
-	private final int NUM_COLUNAS = 10;
-	private Terreno[][] mapa;
-	private ArrayList<Robo> listaRobos;
-	private ArrayList<Cristal> listaCristais = new ArrayList<Cristal>();
-	private ArrayList<Base1> listaBase1 = new ArrayList<Base1>();
-	private ArrayList<Base2> listaBase2 = new ArrayList<Base2>();
-	
 	//Mapa prototipo de dimensoes 10 x 10
 	private int[][] prototipo = {
-								{0,0,0,2,2,2,2,2,2,2},
-								{0,0,0,2,1,2,2,4,2,3},
-								{0,0,0,2,3,2,2,2,4,2},
-								{2,2,2,2,2,5,5,2,2,2},
-								{2,2,2,3,2,2,5,2,2,2},
-								{2,2,2,2,5,2,2,3,2,2},
-								{2,2,2,2,5,5,2,2,2,2},
-								{2,4,2,2,2,3,2,1,1,1},
-								{2,2,4,2,2,2,2,1,1,1},
-								{3,2,2,2,2,2,2,1,1,1}
+								{0,0,0,2,2,2,2,2,2,2,2},
+								{0,0,0,2,1,2,2,4,2,3,2},
+								{0,0,0,2,3,2,2,2,4,2,2},
+								{2,2,2,2,2,5,5,2,2,2,2},
+								{2,2,2,3,2,2,5,2,2,2,2},
+								{2,2,2,2,5,2,2,3,2,2,2},
+								{2,2,2,2,5,5,2,2,2,2,2},
+								{2,4,2,2,2,3,2,1,1,1,2},
+								{2,2,4,2,2,2,2,1,1,1,2},
+								{3,2,2,2,2,2,2,1,1,1,2},
+								{2,2,2,2,5,5,2,2,2,2,2},
+								{2,2,2,2,5,5,2,2,2,2,2},
+								{2,2,2,2,5,5,2,2,2,2,2},
+								{2,2,2,2,5,5,2,2,2,2,2},
+								{2,2,2,2,5,5,2,2,2,2,2},
+								{2,2,2,2,5,5,2,2,2,2,2}
 								};
 	/*	LEGENDA
 		0 = Base1
@@ -31,6 +29,15 @@ public class Arena implements Empilhavel{
 		4 = Montanha
 		5 = Agua
 		*/
+	private final int NUM_LINHAS = prototipo.length;
+	private final int NUM_COLUNAS = prototipo[0].length;
+	private Terreno[][] mapa;
+	private ArrayList<Robo> listaRobos;
+	private ArrayList<Cristal> listaCristais = new ArrayList<Cristal>();
+	private ArrayList<Base1> listaBase1 = new ArrayList<Base1>();
+	private ArrayList<Base2> listaBase2 = new ArrayList<Base2>();
+	
+	
 
 	public Arena() {
 		mapa = new Terreno[NUM_LINHAS][NUM_COLUNAS];

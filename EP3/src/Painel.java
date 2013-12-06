@@ -29,7 +29,7 @@ public class Painel extends JPanel {
 		this.loadImages();
 		setBackground(Color.BLACK);
 		setVisible(true);
-		setOpaque(false);
+		//setOpaque(false);
 		
 		defaultFont = new Font("Monospace", Font.BOLD, 14);
 		

@@ -1,3 +1,5 @@
+import javax.swing.SwingUtilities;
+
 
 public class Teste {
 	
@@ -7,7 +9,7 @@ public class Teste {
 	public static void main(String args[]) {
 		Programa2 teste;
 			
-		Arena arenaPrincipal = new Arena();
+		final Arena arenaPrincipal = new Arena();
 		
 		
 		for (int i = 0; i < 1; i++) {
