@@ -12,7 +12,7 @@ public class PainelEntidades extends JPanel {
 	public PainelEntidades (Arena mapa)
 	{
 		this.mapa = mapa;
-		setPreferredSize(new Dimension(Painel.larguraTela, Painel.alturaTela));
+		//setPreferredSize(new Dimension(Painel.larguraTela, Painel.alturaTela));
 		setBackground(new Color(255,255,255,0));
 		setVisible(true);
 		setOpaque(false);

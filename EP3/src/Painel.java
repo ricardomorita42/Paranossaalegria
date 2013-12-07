@@ -33,7 +33,7 @@ public class Painel extends JPanel {
 		
 		defaultFont = new Font("Monospace", Font.BOLD, 14);
 		
-		setPreferredSize(new Dimension(larguraTela, alturaTela));
+		//setPreferredSize(new Dimension(larguraTela, alturaTela));
 		setDoubleBuffered(true);
 		
 	}
