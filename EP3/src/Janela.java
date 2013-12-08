@@ -16,16 +16,27 @@ public class Janela extends JFrame implements ActionListener {
 	private JMenuBar menuBar;
 	private JMenu menu;
 	private JMenuItem menuItem;
+	private boolean isPaused = false;
+	private boolean gameStart = false;
 	
 	public Janela (String nome, Arena mapa) {
 		super(nome);
 		
 		//Criando um menu
-		
 		createMenu();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(larguraTela, alturaTela);
+		setVisible(true);
+		
+		while (!gameStart) {
+			try {
+				Thread.sleep(25);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		//Ajusta a tela para conter exatamente o tamanho especificado em Painel.java
 		Insets insets = getInsets();
@@ -39,20 +50,22 @@ public class Janela extends JFrame implements ActionListener {
 		add(scrollpane, BorderLayout.CENTER);
 		pack();
 		
-		//setLocationRelativeTo(null);
 		setVisible(true);
+		
 		// Enquanto houver robôs e instruções para serem executadas, 
 		// atualiza a arena;
 		while (!mapa.listaRobosVazia())
 		{
-			try
-			{
-				Thread.sleep(500);
-			}catch (Exception e)
-			{
+			if (isPaused) {
+				
 			}
-					
-			mapa.atualiza();
+			else {
+				try
+				{
+					Thread.sleep(500);
+					mapa.atualiza();
+				} catch (Exception e) {	}
+			}
 		}
 	}
 	
@@ -65,14 +78,28 @@ public class Janela extends JFrame implements ActionListener {
 		
 		menuItem = new JMenuItem("New");
 		menuItem.setMnemonic(KeyEvent.VK_N);
-		menuItem.addActionListener(this);
+		menuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				gameStart = true;
+			}
+			
+		});
 		menu.add(menuItem);
 		
 		menu.addSeparator();
 		
 		menuItem = new JMenuItem("Pause");
 		menuItem.setMnemonic(KeyEvent.VK_P);
-		menuItem.addActionListener(this);
+		menuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				isPaused = !isPaused;
+			}
+		});
+		
 		menu.add(menuItem);
 		
 		menu.addSeparator();
@@ -84,7 +111,6 @@ public class Janela extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);
-				
 			}
 			
 		});
@@ -122,5 +148,4 @@ public class Janela extends JFrame implements ActionListener {
 		// TODO Auto-generated method stub
 		
 	}
-	
 }

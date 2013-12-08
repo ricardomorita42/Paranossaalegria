@@ -21,5 +21,6 @@ public class Teste {
 		}
 		
 		new Janela("mapa", arenaPrincipal);
+		
 	}
 }

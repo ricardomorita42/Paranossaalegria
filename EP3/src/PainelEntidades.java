@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class PainelEntidades extends JPanel implements ActionListener  {
+public class PainelEntidades extends JPanel implements ActionListener {
 	/**
 	 * 
 	 */
