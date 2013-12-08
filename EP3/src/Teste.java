@@ -11,7 +11,6 @@ public class Teste {
 			
 		final Arena arenaPrincipal = new Arena();
 		
-		
 		for (int i = 0; i < 1; i++) {
 			teste = new Programa2();
 			arenaPrincipal.insereExercito(teste.getPrograma(arenaPrincipal), new Base1());
@@ -36,7 +35,6 @@ public class Teste {
 			}
 					
 			arenaPrincipal.atualiza();
-			janela.repaint();
 		}
 		
 	}

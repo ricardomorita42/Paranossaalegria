@@ -1,13 +1,17 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
-public class PainelEntidades extends JPanel {
+public class PainelEntidades extends JPanel implements ActionListener  {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private Arena mapa;
 	private Font defaultFont;
+	Timer timer;
 	
 	public PainelEntidades (Arena mapa)
 	{
@@ -17,8 +21,9 @@ public class PainelEntidades extends JPanel {
 		setVisible(true);
 		setOpaque(false);
 		defaultFont = new Font("Monospace", Font.BOLD, 14);
-		
 		setDoubleBuffered(true);
+		timer = new Timer(25,this);
+		timer.start();
 	}
 	
 	/*	LEGENDA
@@ -68,15 +73,19 @@ public class PainelEntidades extends JPanel {
 							icon = new ImageIcon(this.getClass().getResource("img/robo1A.png"));
 						
 						img = icon.getImage();
-
+						
+						
 						g2d.drawImage(img, x-lado, y-r+erroY, 52, 60, null);
+						Toolkit.getDefaultToolkit().sync(); //visto em http://zetcode.com/tutorials/javagamestutorial/animation/
 						g2d.setColor(Color.WHITE);
 						
 						g2d.setFont(defaultFont);
 						g2d.drawString(String.valueOf(((Robo)entidade).getVida()), x-(int)(r/2), y+(int)(r/2)+erroY);
-
+						Toolkit.getDefaultToolkit().sync();
+						
 						g2d.setFont(new Font("Monospace", Font.BOLD, 9));
 						g2d.drawString(String.valueOf(((Robo)entidade).getAcaoAtual()), x-(int)(r/2), y-(int)(r)+erroY);
+						Toolkit.getDefaultToolkit().sync();
 					}
 					
 					else if (entidade instanceof Cristal){
@@ -84,6 +93,7 @@ public class PainelEntidades extends JPanel {
 						ImageIcon icon = new ImageIcon(this.getClass().getResource("img/cristal.png"));
 						img = icon.getImage();
 						g2d.drawImage(img, x-lado, y-r+erroY, 52, 60, null);
+						Toolkit.getDefaultToolkit().sync();
 					}
 				}
 
@@ -98,5 +108,9 @@ public class PainelEntidades extends JPanel {
 	{
 		super.paintComponent(g);
 		doDrawing(g);
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		repaint();
 	}
 }

@@ -19,27 +19,34 @@ public class Janela extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(larguraTela, alturaTela);
 		
+		//Ajusta a tela para conter exatamente o tamanho especificado em Painel.java
+		Insets insets = getInsets();
+		int insetWide = insets.left + insets.right;
+		int insetTall = insets.top + insets.bottom;
+		setSize(larguraTela + insetWide, alturaTela + insetTall);
+		
 		//Adicionando uma "base" para o desenho
 		JPanel backgroundPanel = new JPanel();
 		
-		backgroundPanel.setLayout(new OverlayLayout(backgroundPanel)); //Sobrepondo o itens colocados na base
-		backgroundPanel.add(new PainelEntidades(mapa)); 		//Desenhando o mapa
-		backgroundPanel.add(new Painel(mapa));					//Desenhando as entidades
-		backgroundPanel.setPreferredSize(new Dimension (mapa.getMapWidth()*43,mapa.getMapHeight()*75)); //Define aonde que o scroll aparece
-		//add(backgroundPanel,BorderLayout.CENTER);
+		//Sobrepondo o itens colocados na base
+		backgroundPanel.setLayout(new OverlayLayout(backgroundPanel));
 		
+		//Desenhando o mapa
+		backgroundPanel.add(new PainelEntidades(mapa));
+		
+		//Desenhando as entidades
+		backgroundPanel.add(new Painel(mapa));
+		
+		//Define aonde que o scroll aparece
+		backgroundPanel.setPreferredSize(new Dimension (mapa.getMapWidth()*43,mapa.getMapHeight()*75)); 
 		
 		//JSCrollPane (barra de rolagem) na base
 		JScrollPane scrollPane = new JScrollPane(backgroundPanel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setPreferredSize(new Dimension (mapa.getMapWidth()*45,mapa.getMapHeight()*78)); //Desenha um pouco mais
+		scrollPane.setPreferredSize(new Dimension (mapa.getMapWidth()*45,mapa.getMapHeight()*78));
 		add(scrollPane, BorderLayout.CENTER);
 		pack();
-		
-		//setResizable(true);
-		//setContentPane(new Painel(mapa));
-		//add(new PainelEntidades(mapa));
 		
 		setLocationRelativeTo(null);
 		setVisible(true);

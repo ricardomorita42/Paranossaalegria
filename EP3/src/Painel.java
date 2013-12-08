@@ -1,5 +1,7 @@
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -7,7 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
-public class Painel extends JPanel {
+public class Painel extends JPanel implements ActionListener{
 	/** 
 	 * 
 	 */
@@ -22,6 +24,7 @@ public class Painel extends JPanel {
 	private TexturePaint txtrugoso;
 	private TexturePaint txtmontanha;
 	private TexturePaint txtagua;
+	Timer timer;
 	
 	public Painel (Arena mapa)
 	{
@@ -29,13 +32,10 @@ public class Painel extends JPanel {
 		this.loadImages();
 		setBackground(Color.BLACK);
 		setVisible(true);
-		//setOpaque(false);
-		
 		defaultFont = new Font("Monospace", Font.BOLD, 14);
-		
-		//setPreferredSize(new Dimension(larguraTela, alturaTela));
 		setDoubleBuffered(true);
-		
+		timer = new Timer(500, this);
+		timer.start();
 	}
 	
 	/*	LEGENDA
@@ -166,6 +166,10 @@ public class Painel extends JPanel {
 		txtmontanha = new TexturePaint(img5, new Rectangle(0, 0, 130, 150));
 		txtagua = new TexturePaint(img6, new Rectangle(0, 0, 130, 150));
 		
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		revalidate();
 	}
 }
 
