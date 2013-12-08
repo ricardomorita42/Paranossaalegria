@@ -1,6 +1,5 @@
 import javax.swing.SwingUtilities;
 
-
 public class Teste {
 	
 	/* Insere robôs nas bases, cada qual com um determinado programa de
@@ -21,21 +20,6 @@ public class Teste {
 			arenaPrincipal.insereExercito(teste.getProgramaAttack(arenaPrincipal), new Base2());
 		}
 		
-		Janela janela = new Janela("mapa", arenaPrincipal);
-		
-		// Enquanto houver robôs e instruções para serem executadas, 
-		// atualiza a arena;
-		while (!arenaPrincipal.listaRobosVazia())
-		{
-			try
-			{
-				Thread.sleep(500);
-			}catch (Exception e)
-			{
-			}
-					
-			arenaPrincipal.atualiza();
-		}
-		
+		new Janela("mapa", arenaPrincipal);
 	}
 }

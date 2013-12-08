@@ -46,6 +46,7 @@ public class PainelEntidades extends JPanel implements ActionListener  {
 		int deltaL = (int)(Math.sqrt(3)*r/2);
 		int deltaH = (int)((3.0/2)*r);
 		int erroY = -8;
+		int lado = (int)(r*Math.sqrt(3.0)/2);
 		
 		// Pintando as casas da arena...
 		for (int i = 0; i < w; i++) {
@@ -61,7 +62,6 @@ public class PainelEntidades extends JPanel implements ActionListener  {
 				
 				if (terrenoAtual.terrenoOcupado())
 				{
-					int lado = (int)(r*Math.sqrt(3.0)/2);
 					Object entidade = terrenoAtual.getEntidade();
 					
 					if (entidade instanceof Robo) {
@@ -73,7 +73,6 @@ public class PainelEntidades extends JPanel implements ActionListener  {
 							icon = new ImageIcon(this.getClass().getResource("img/robo1A.png"));
 						
 						img = icon.getImage();
-						
 						
 						g2d.drawImage(img, x-lado, y-r+erroY, 52, 60, null);
 						Toolkit.getDefaultToolkit().sync(); //visto em http://zetcode.com/tutorials/javagamestutorial/animation/
@@ -92,9 +91,17 @@ public class PainelEntidades extends JPanel implements ActionListener  {
 						Image img;
 						ImageIcon icon = new ImageIcon(this.getClass().getResource("img/cristal.png"));
 						img = icon.getImage();
-						g2d.drawImage(img, x-lado, y-r+erroY, 52, 60, null);
+						g2d.drawImage(img, x-lado-2, y-r+erroY+4, 52, 60, null);
 						Toolkit.getDefaultToolkit().sync();
 					}
+				}
+				
+				if (terrenoAtual instanceof Montanha) {
+					Image img;
+					ImageIcon icon = new ImageIcon(this.getClass().getResource("img/mountain.png"));
+					img = icon.getImage();
+					g2d.drawImage(img, x-lado-12, y-r*2+10, 78, 78, null);
+					Toolkit.getDefaultToolkit().sync();
 				}
 
 				x += (int)(Math.sqrt(3)*r);
