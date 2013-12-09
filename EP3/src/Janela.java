@@ -25,10 +25,12 @@ public class Janela extends JFrame implements ActionListener {
 		//Criando um menu
 		createMenu();
 		
+		//Preparando o frame básico do jogo
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(larguraTela, alturaTela);
 		setVisible(true);
 		
+		//Aguardando o início do jogo
 		while (!gameStart) {
 			try {
 				Thread.sleep(25);
@@ -69,7 +71,8 @@ public class Janela extends JFrame implements ActionListener {
 		}
 	}
 	
-	void createMenu() {
+	//Função que efetivamente cria o menu
+	private void createMenu() {
 		menuBar = new JMenuBar();
 		menu = new JMenu("Game");
 		menu.setMnemonic(KeyEvent.VK_G);
@@ -82,7 +85,7 @@ public class Janela extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				gameStart = true;
+				gameStart = true;	//Começa o jogo
 			}
 			
 		});
@@ -96,7 +99,7 @@ public class Janela extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				isPaused = !isPaused;
+				isPaused = !isPaused;	//Pausa/despausa o jogo
 			}
 		});
 		
@@ -110,7 +113,7 @@ public class Janela extends JFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
+				System.exit(0);	//Sai do jogo
 			}
 			
 		});
@@ -118,8 +121,9 @@ public class Janela extends JFrame implements ActionListener {
 		
 		setJMenuBar(menuBar);
 	}
-
-	JScrollPane createWindow(Arena mapa) {
+	
+	//Chama Painel.java e PainelEntidades.java sobre um scrollpane, devolvendo este último
+	private JScrollPane createWindow(Arena mapa) {
 		JPanel backgroundPanel = new JPanel();
 		
 		//Sobrepondo o itens colocados na base

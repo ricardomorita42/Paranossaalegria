@@ -152,7 +152,7 @@ public class Painel extends JPanel implements ActionListener{
 			img3 = ImageIO.read(this.getClass().getResourceAsStream("img/grass_1.png"));
 			img4 = ImageIO.read(this.getClass().getResourceAsStream("img/rugoso3.jpg"));
 			img5 = ImageIO.read(this.getClass().getResourceAsStream("img/montanha.jpg"));
-			img6 = ImageIO.read(this.getClass().getResourceAsStream("img/agua.jpg"));	
+			img6 = ImageIO.read(this.getClass().getResourceAsStream("img/animated_water.gif"));	
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

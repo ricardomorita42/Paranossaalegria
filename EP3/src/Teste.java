@@ -20,7 +20,7 @@ public class Teste {
 			arenaPrincipal.insereExercito(teste.getProgramaAttack(arenaPrincipal), new Base2());
 		}
 		
-		new Janela("mapa", arenaPrincipal);
+		new Janela("R0bot Wars", arenaPrincipal);
 		
 	}
 }

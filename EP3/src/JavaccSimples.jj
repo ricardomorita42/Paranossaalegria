@@ -1,25 +1,28 @@
 options {
 	IGNORE_CASE = true;
 	LOOKAHEAD   = 2;			// para eliminar conflitos
+	STATIC = false;
 }
 
 // Descrição da classe Calc
 PARSER_BEGIN(Compilador)
 import java.util.*;
 
-public class Compilador {
-	static Instrucao[] Prog;			 // programa
-	static int tam = 0;						 // tamanho do programa
 
-	public static void main(String args[]) throws ParseException {
-		Prog = null;
-		tam = 0;
-		Compilador parser = new Compilador(System.in); // cria o compilador
-		Prog = parser.Programa();		   // compila e retorna o código de máquina
-		
-		//Teste t = new Teste();
-		//t.Roda(Prog);
-	}
+public class Compilador {
+	HashMap<String, Integer> varAdress = new HashMap<String, Integer>();
+	HashMap<String, Vector<Instrucao>> codFuncoes = new HashMap<String, Vector<Instrucao>>();
+	HashMap<String,ArrayList<String>> prmFuncoes = new HashMap<String,ArrayList<String>>();
+	HashMap<String,ArrayList<String>> varFuncoes = new HashMap<String,ArrayList<String>>();
+	Instrucao[] Prog = null;			 // programa
+	int tam = 0;						 // tamanho do programa
+	int posMem = 0;
+	int contJmp = 0; 
+	String ondeEstou = "";
+	String nomeFuncao = "";
+	int variaveisLocais = 0;
+	Arena mapa;
+	
 }
 
 PARSER_END(Compilador)
@@ -36,72 +39,187 @@ SKIP :
 }
 
 // Programa é o ponto de partida
-Instrucao[] Programa() :
+Instrucao[] Programa(Arena arena) :
 {
 	Vector<Instrucao> p = new Vector<Instrucao>(0); // para retornar
 	Vector<Instrucao> x = new Vector<Instrucao>(0); // trecho compilado
 													// por outras regras
 
 	Instrucao[] a = new Instrucao[0]; // auxiliar
+	Operacao op;
 	Token t;
 	Numero num;
 	Texto txt;
+	int i;
+	this.mapa = arena;
+
+	
 }
 {
+  
 	(
 		x = Comando() {
 			//System.out.println(x.get(x.size()-1).getLabel());
 			p.addAll(x);
 		}
 	)*
-	<EOF> {
-		//p.add(new RET());		// para garantir que tem um RET
-		p.add(new Instrucao());
-		p.get(p.size()-1).setInstrucao("PRN");
-		
+	< EOF >
+	 {
+
 		p.add(new Instrucao());
 		p.get(p.size()-1).setInstrucao("END");
 		
-		for (int i=0; i < p.size(); i++)
+		for (i=0; i < p.size(); i++)
 		{
+		  	//a[i] = p.get(i);
 			num = new Numero(0);
+			String label = "";
+			String instrucao = "";
+			String operando = "";
 			
 			if (p.get(i).getOperando() instanceof Numero)
+			{
 				num = (Numero)(p.get(i).getOperando());
-			
-			System.out.println(p.get(i).getInstrucao() + " " + Integer.toString(num.getNum()));
+				operando = String.valueOf(num.getNum());
+	        }
+			else if (p.get(i).getOperando() instanceof Texto)
+			{
+			  	txt = (Texto)(p.get(i).getOperando());
+				operando = txt.getString();			}
+			else if (p.get(i).getOperando() instanceof Arena)
+			{
+				operando = "mapa";
+			}
+
+			if (p.get(i).getLabel() != null)
+			{
+			  	label = p.get(i).getLabel();			}
+
+			if (p.get(i).getInstrucao() != null)
+			{
+			  	instrucao = p.get(i).getInstrucao();			}
+
+			if (p.get(i).getOperando() instanceof Operacao)
+			{
+			  	String arg1,arg2,arg3;
+			  	op = (Operacao)p.get(i).getOperando();
+			  	arg1 = op.getAcao();
+			  	arg2 = op.getDirecao();
+			  	arg3 = op.getOrientacao();
+				System.out.println(instrucao + "\t" + arg1 + "\t" + arg2 + "\t" + arg3);
+			}
+			else
+				System.out.println(label + "\t" + instrucao + "\t" + operando);
 		}
 		
+		System.out.println("\nHash\n");
+		
+		for (String chave : varAdress.keySet())
+		{
+			System.out.println("Ch: " + chave + "	Valor: " + Integer.toString(varAdress.get(chave)));
+		}
+
 		return  p.toArray(a);
 	}
 }
 
 Vector<Instrucao> Comando() :
 {
+
+    System.out.println("ini cmd erro estranho...");
+    
 	Vector<Instrucao> p = new Vector<Instrucao>(0);
 	Vector<Instrucao> x = new Vector<Instrucao>(0);
 	Token t;
 	Numero num;
 	Texto txt;
+	Operacao op;
+	int i;
+	String arg1,arg2,arg3;
+	
 }
 {
 	(
+	  "sistema" "("
+	   t = <PALAVRA>
+	   {
+	      arg1 = t.image;
+	      
+	      if (arg1.indexOf("mover") != -1)
+	  	  {
+	  	    arg1 = "mover";
+	  	  }
+	  	  else if (arg1.indexOf("atacar") != -1)
+	  	  {
+	  	    arg1 = "atacar";
+	  	  }
+	  	  else if (arg1.indexOf("coletar") != -1)
+	  	  {
+	  	    arg1 = "coletar";
+	  	  }
+	  	  else if (arg1.indexOf("depositar") != -1)
+	  	  {
+	  	    arg1 = "depositar";
+	  	  }
+	   }
+	   ","
+	   t = <PALAVRA>
+	   {
+	  	  arg2 = t.image;
+
+	  	  if (arg2.indexOf("direita") != -1)
+	  	  {
+	  	    arg2 = "direita";
+	  	  }
+	  	  else if (arg2.indexOf("esquerda") != -1)
+	  	  {
+	  	    arg2 = "esquerda";
+	  	  }
+	  	  
+	   }
+	   ","
+	   t = <PALAVRA>
+	   {
+	      arg3 = t.image;
+	      if (arg3.indexOf("cima") != -1)
+	  	  {
+	  	    arg3 = "cima";
+	  	  }
+	  	  else if (arg3.indexOf("baixo") != -1)
+	  	  {
+	  	    arg3 = "baixo";
+	  	  }
+	  	  else if (arg3.indexOf("reto") != -1)
+	  	  {
+	  	    arg3 = "reto";
+	  	  }
+	   }
+	  ")" ";"
+	  {
+	    p.add(new Instrucao());
+	    i = p.size()-1;
+		p.get(i).setInstrucao("PUSH");
+		p.get(i).setOperando(mapa);
+		
+		p.add(new Instrucao());
+	    i = p.size()-1;
+		p.get(i).setInstrucao("SYS");
+		op = new Operacao(arg1,arg2,arg3);
+		System.out.println("|" + arg1 + "|-|" + arg2 + "|-|" + arg3 + "|");
+		p.get(i).setOperando(op);
+	  }
+	 | 
 	 x = Expressão() ";" {p.addAll(x);}
 	 |
-	 x = Condicional()   {}
+	 x = Condicional()   {p.addAll(x);}
 	 |
-	 x = Laço()		     {}
+	 x = Laço()		     {p.addAll(x);}
 	 |
-	 x = Função()		 {
-	 }
+	 x = Função()		 {p.addAll(x);}
 	 | 
-	 "return" (x=Expressão() {})? ";" {}
-	 |
-	 "print" x=ListPrint() {} ";"
-	 |
-	 "println" ";"{
-		
-	 }
+	 "return" (x=Expressão() {})? ";" {p.addAll(x);}
+	 
+
 	 ) {return p;}
 }
 
@@ -110,23 +228,62 @@ Vector<Instrucao> Expressão() :
 {
 	Vector<Instrucao> p = new Vector<Instrucao>(0);
 	Vector<Instrucao> x = new Vector<Instrucao>(0);
-	Numero num;
+	Numero num1,num2;
 	Texto txt;
 }
 {
-	x = Arit() {p.addAll(x);}
+	x = Arit()
+	{
+	  	p.addAll(x);
+	}
 	(
-	 "<=" x = Arit() {}
+	 "<=" x = Arit()
+	 {
+	   	p.addAll(x);
+	   	p.add(new Instrucao());
+	    int i = p.size()-1;
+	    p.get(i).setInstrucao("LE");
+	 }
 	 |
-	 ">=" x = Arit() {}
+	 ">=" x = Arit()
+	 {
+	    p.addAll(x);
+	    p.add(new Instrucao());
+	    int i = p.size()-1;
+	    p.get(i).setInstrucao("GE");
+	 }
 	 |
-	 "!=" x = Arit() {}
+	 "!=" x = Arit()
+	 {
+	    p.addAll(x);
+	    p.add(new Instrucao());
+	    int i = p.size()-1;
+	    p.get(i).setInstrucao("NE");
+	 }
 	 |
-	 "==" x = Arit() {}
+	 "==" x = Arit()
+	 {
+	    p.addAll(x);
+	    p.add(new Instrucao());
+	    int i = p.size()-1;
+	    p.get(i).setInstrucao("EQ");
+	 }
 	 |
-	 "<"  x = Arit() {}
+	 "<"  x = Arit()
+	 {
+	    p.addAll(x);
+	    p.add(new Instrucao());
+	    int i = p.size()-1;
+	    p.get(i).setInstrucao("LT");
+	 }
 	 |
-	 ">"  x = Arit() {}
+	 ">"  x = Arit()
+	 {
+	    p.addAll(x);
+	    p.add(new Instrucao());
+	    int i = p.size()-1;
+	    p.get(i).setInstrucao("GT");
+	 }
 	 )* {return p;}
 }
 
@@ -193,17 +350,88 @@ Vector<Instrucao> Fator() :
 }
 {
 	x=Chamada() {				// Chamada de função
+		p.addAll(x);
 		return p;
 	}
 |								// Atribuição
-	 t=<ID> "=" x=Expressão() {	
+	 t=<ID> "=" x=Expressão() {
+	   System.out.println("ATRIBUICAO...");
+		
+		p.addAll(x);
+		
+		p.add(new Instrucao());
+		int i = p.size()-1;
+		p.get(i).setInstrucao("STO");
+		
+		if (varAdress.containsKey(t.image)) {
+		  	//Essa condicao eh necessaria para priorizar variaveis Globais
+			num = new Numero(varAdress.get(t.image));
+			p.get(i).setOperando(num);				
+		}
+		else if (nomeFuncao != "")
+		{
+			//Estamos em um bloco de Funcao
+			//O codigo de Instrucoes sera reproduzido ao chamar a funcao
+			p.add(new Instrucao());
+			p.get(i).setLabel(nomeFuncao+t.image);
+			num = new Numero(-1);
+			p.get(i).setOperando(num);
+
+			//Adiciona a lista de variáveis locais a funcao
+			varFuncoes.get(nomeFuncao).add(t.image);
+		}
+		else if (!varAdress.containsKey(ondeEstou+t.image)) {
+			int posMemAtual = posMem++;
+			num = new Numero(posMemAtual);
+			variaveisLocais++;
+			varAdress.put(ondeEstou+t.image, posMemAtual);
+			p.get(i).setOperando(num);	
+		}
+		else {
+			num = new Numero(varAdress.get(ondeEstou+t.image));
+			p.get(i).setOperando(num);	
+		}
+			
 		return p;
 	}
 	|
 	t=<ID> {
-		p.add(new Instrucao());
-		p.get(p.size()-1).setLabel(t.image);
+	
 		
+		//System.out.println("Estou a imprimir apenas <ID>: |" + t.image + "| - OndeEstou+Arg: |" + ondeEstou+t.image + "| ");
+		
+		if (varAdress.containsKey(t.image))		{
+			p.add(new Instrucao());
+			int i = p.size()-1;
+			p.get(i).setInstrucao("RCL");
+			num = new Numero(varAdress.get(t.image));
+			p.get(i).setOperando(num);
+		}
+		else if (nomeFuncao != "")
+		{
+			//Estamos em um bloco de Funcao
+			//O codigo de Instrucoes sera reproduzido ao chamar a funcao
+			p.add(new Instrucao());
+			int i = p.size()-1;
+			p.get(i).setLabel(nomeFuncao+t.image);
+			p.get(i).setInstrucao("RCL");
+			num = new Numero(-1);
+			p.get(i).setOperando(num);
+		}
+		else if (varAdress.containsKey(ondeEstou+t.image))
+		{
+			p.add(new Instrucao());
+			int i = p.size()-1;
+			p.get(i).setInstrucao("RCL");
+			num = new Numero(varAdress.get(ondeEstou+t.image));
+			p.get(i).setOperando(num);
+		}
+		else
+		{
+			//Tentativa de usar variável não declarada
+			//EH PRA POR UMA EXCEPTION AQUI, PQ A VARIAVEL FOI ENCONTRADA NUMA EXPRESSAO SENDO Q ELA N FOI DECLARADA ANTERIORMENTE
+			System.out.println("Uso de variavel nao declarada");
+		}		
 		return p;
 	}
 |
@@ -218,6 +446,7 @@ Vector<Instrucao> Fator() :
 	}
 |
     "(" x = Expressão() ")"	{
+      	p.addAll(x);
 		return p;
 	}
 }
@@ -226,34 +455,107 @@ Vector<Instrucao> Condicional() :
 {
 	Vector<Instrucao> p = new Vector<Instrucao>(0);
 	Vector<Instrucao> x = new Vector<Instrucao>(0);
-	int delta, pos;
+	Texto txt;
+	Boolean blocoElse = false;
+	int i,aux;
+	int pos1,pos2;
 }
 {
 	("if" | "se") 
     "(" 
-		x=Expressão() {} 
+		x=Expressão()
+		{
+		   p.addAll(x);
+
+		   p.add(new Instrucao());
+		   i = p.size()-1;
+		   p.get(i).setInstrucao("JIF");
+		   pos1 = contJmp++;
+		   txt = new Texto("lblJmp" + String.valueOf(pos1));
+		   p.get(i).setOperando(txt);
+		} 
 	")" 
-	("then" | "então")
-	x = Bloco() {}
+	x = Bloco()
+	{
+	  	   p.addAll(x);
+
+		   p.add(new Instrucao());
+		   i = p.size()-1;
+		   aux = i;
+		   p.get(i).setInstrucao("JMP");
+		   pos2 = contJmp++;
+		   txt = new Texto("lblJmp" + String.valueOf(pos2));
+		   p.get(i).setOperando(txt);
+		   
+		   p.add(new Instrucao());
+		   i = p.size()-1;
+		   p.get(i).setInstrucao("");
+		   p.get(i).setLabel("lblJmp" + String.valueOf(pos1));
+	}
 	( 
 	 ("else" | "senão" )
-	 x = Bloco() {} 
-	  )?
-		{ return p; }
+	 x = Bloco()
+	 {
+	   	   blocoElse = true;
+
+	   	   p.addAll(x);
+	   	   
+	   	   p.add(new Instrucao());
+		   i = p.size()-1;
+		   p.get(i).setInstrucao("");
+		   p.get(i).setLabel("lblJmp" + String.valueOf(pos2));
+	 } 
+	)?
+	{
+	  if (!blocoElse)
+	  {
+	    p.remove(aux);	  }
+	  return p;
+	}
 }
 
 Vector<Instrucao> Laço() :
 {
 	Vector<Instrucao> p = new Vector<Instrucao>(0);
 	Vector<Instrucao> x = new Vector<Instrucao>(0);
-	int exp, delta;
+	Texto txt;
+	int i;
+	int pos1,pos2;
 }
 {
 	( "while" | "enquanto" )
-	"("x = Expressão() {}
+	"("x = Expressão()
+	{
+		p.add(new Instrucao());
+		i = p.size()-1;
+		pos1 = contJmp++;
+		p.get(i).setLabel("lblJmp" + String.valueOf(pos1));
+	    
+	  	p.addAll(x);
+
+		p.add(new Instrucao());
+		i = p.size()-1;
+		p.get(i).setInstrucao("JIF");
+		pos2 = contJmp++;
+		txt = new Texto("lblJmp" + String.valueOf(pos2));
+		p.get(i).setOperando(txt);
+	}
 	")" 
-    ( "do" | "faça" ) 
-	  x = Bloco() {
+	  x = Bloco()
+	{
+	  	p.addAll(x);
+
+	  	p.add(new Instrucao());
+		i = p.size()-1;
+		p.get(i).setInstrucao("JMP");
+		txt = new Texto("lblJmp" + String.valueOf(pos1));
+		p.get(i).setOperando(txt);
+	  	
+	  	p.add(new Instrucao());
+		i = p.size()-1;
+		p.get(i).setInstrucao("");
+		p.get(i).setLabel("lblJmp" + String.valueOf(pos2));
+		   
 		return p;
 	}
 }
@@ -264,47 +566,115 @@ Vector<Instrucao> Bloco() :
 	Vector<Instrucao> x = new Vector<Instrucao>(0);
 }
 {
-	"" //TESTETETTETE
+		"{"
+	(
+		x = Comando() {p.addAll(x);
+		}
+	)*
+		"}"
 	{
 		return p;
 	}
 }
-
-
-
 
 	// Definição de função
 Vector<Instrucao> Função() :
 {
 	Vector<Instrucao> p = new Vector<Instrucao>(0);
 	Vector<Instrucao> x = new Vector<Instrucao>(0);
+	Vector<Instrucao> aux = new Vector<Instrucao>(0);
 	Token t;
+	String strAux;
+	Numero num;
+	int i;
+	ArrayList<String> lstArgs;
 }
 {
-	"func" t=<ID> {}
-	"(" /*(Args(nome,v))?*/ ")"		// lista de argumentos
+	"func" t=<ID>
+	{
+	  	//Contexto global
+	  	ondeEstou = "";
+	    variaveisLocais = 0;
+	    varFuncoes.put(t.image,new ArrayList<String >());
+	    
+	    //p.add(new Instrucao());
+		//i = p.size()-1;
+		//p.get(i).setLabel("lblJmp"+t.image);
+	}
+	"(" lstArgs = Args(t.image) ")"		// lista de argumentos
+	{
+	  	prmFuncoes.put(t.image,lstArgs);
+	  	
+	  	
+	  	for (int m = 0; m < lstArgs.size(); m++)
+	  	{
+	  	  	//Assumimos que os argumentos estão empilhados
+	  	  	//Definimos os parâmetros de forma genérica
+			p.add(new Instrucao());
+			i = p.size()-1;
+			p.get(i).setLabel(lstArgs.get(m));
+			p.get(i).setInstrucao("STO");
+	
+			num = new Numero(-1);
+			p.get(i).setOperando(num);	  	}
+
+	  	
+		nomeFuncao = t.image;
+	}
 	x=Bloco() 					// corpo
 	{
-		return p;
+	  	p.addAll(x);
+	  	if (!codFuncoes.containsKey(t.image))
+		{
+		  	//Guarda o código da função
+			codFuncoes.put(t.image,p);
+		}
+
+		nomeFuncao = "";
+		//posMem -= variaveisLocais;
+		//p.addAll(x);
+		return aux;
 	}
 }
 
 	// Argumentos
-	void Args(/*String fnom, Função v*/) :
+	ArrayList<String> Args(String origem) :
 	{
+	  Token t;
+	  String arg = "";
+	  ArrayList<String> lstArgs = new ArrayList<String>();
 	}
 	{
-		""
-		//Arg(fnom,v)	( ","	 Arg(fnom,v) )*
+	 (	 	 arg = Arg()
+	    {
+	        lstArgs.add(origem+arg);
+	    }
+	    
+	    (
+	    ","	      
+		    arg = Arg()
+		    {
+		        lstArgs.add(origem+arg);
+		    }
+	    )*
+	)?
+		{			return lstArgs;
+		}
 	}
 
 	// Um argumento
-	void Arg(/*String fnom, Função f*/) :
+	String Arg() :
 	{
 		Token t;
 	}
 	{
-		t=<ID> {
+	  	t = <ID>
+	  	{
+	  	  return t.image;	  	}
+		|
+		t = <NUM>
+		{
+		  return t.image;
 		}
 	}
 
@@ -313,99 +683,101 @@ Vector<Instrucao> Função() :
 	{
 		Vector<Instrucao> p = new Vector<Instrucao>(0);
 		Vector<Instrucao> x = new Vector<Instrucao>(0);
+		ArrayList<String> lstArgs;
+		String rotaAnterior;
+		int n,i,j;
 		Token t;
+		Numero num,num2;
 	}
 	{
-	    t=<ID> {}
+	    t=<ID>
+	    {
+	      rotaAnterior = ondeEstou;
+	      ondeEstou += t.image;
+	    }
 		"("
-			//x=ListParms(f) {p.addAll(x);} // lista de parâmetros
+			lstArgs = Args("")
+			{
+			  for (j = 0, i = lstArgs.size()-1;lstArgs.size() > 0 && i >= 0; i--,j++)
+			  {
+			      x.add(new Instrucao());
+	      	  	  
+	      	  	  if (varAdress.containsKey(lstArgs.get(i)))
+	      	  	  {
+	      	  	    x.get(j).setInstrucao("RCL");
+	      	  	    num = new Numero(varAdress.get(lstArgs.get(i)));
+	      	  	    x.get(j).setOperando(num);	      	  	  }
+	      	  	  else if (varAdress.containsKey(rotaAnterior+lstArgs.get(i)))
+	      	  	  {
+	      	  	    x.get(j).setInstrucao("RCL");
+	      	  	    num = new Numero(varAdress.get(rotaAnterior+lstArgs.get(i)));
+	      	  	    x.get(j).setOperando(num);	      	  	  }
+	      	  	  else
+	      	  	  {
+	      	  	    try
+	      	  	    {
+	      	  	      n = Integer.parseInt(lstArgs.get(i));
+	      	  	      x.get(j).setInstrucao("PUSH");
+	      	  	      num = new Numero(n);
+	      	  	      x.get(j).setOperando(num);	      	  	    }
+	      	  	    catch (Exception e)
+	      	  	    {	      	  	    }	      	  	  }			  }			}
 		")" 
 	    {
-			return p;
-		}
-	}
+	      	if (codFuncoes.containsKey(t.image))
+	      	{
+	      	  	p = codFuncoes.get(t.image);
+	      	  	for (i = 0; i < p.size(); i++)
+	      	  	{
+	      	  	  x.add(new Instrucao());
+	      	  	  j = x.size()-1;
+	      	  	  x.get(j).setLabel(p.get(i).getLabel());
+	      	  	  x.get(j).setInstrucao(p.get(i).getInstrucao());;
+	      	  	  x.get(j).setOperando(p.get(i).getOperando());
+	      	  	  
+	      	  	  if (p.get(i).getLabel() != null)
+	      	  	  {
+	      	  	    String lbl = p.get(i).getLabel();
+					
+	      	  	    if (p.get(i).getInstrucao() != null && p.get(i).getInstrucao() == "STO")
+	      	  	    {
+	      	  	      //if (lstArgs.contains(lbl) || varFuncoes.get(t.image).contains(lbl))
+	      	  	      {
+	      	  	        
+	      	  	        int posMemAtual = posMem++;
+	      	  	        varAdress.put(rotaAnterior+lbl,posMemAtual);
+	      	  	        num = new Numero(posMemAtual);
+	      	  	        x.get(j).setOperando(num);
 
-	// Parâmetros
-	Vector<Instrucao> ListParms(/*Função f*/) :
-	{
-		Vector<Instrucao> p = new Vector<Instrucao>(0);
-		Vector<Instrucao> x = new Vector<Instrucao>(0);
-		Token t;
-		int n = 0;
-		String pnom;
-	}
-	{
-		//x = Parm(f,n++) {p.addAll(x); } // compila cada argumento
-		
-		(
-		 ","
-		 //x = Parm(f,n++) {p.addAll(x);}
-		)*
-		{ 
-			return p;
-		}
-	}
+	      	  	        num = (Numero)p.get(i).getOperando();	      	  	      }	      	  	    }
+	      	  	    else if (p.get(i).getInstrucao() != null && p.get(i).getInstrucao() == "RCL")
+					{
+					  //if (lstArgs.contains(lbl) || varFuncoes.get(t.image).contains(lbl))
+	      	  	      {
+	      	  	        n = varAdress.get(rotaAnterior+lbl);
+	      	  	        num = new Numero(n);
+	      	  	        x.get(j).setOperando(num);
+	      	  	      }					  					}	      	  	  }	      	  	}
+			}
+			else
+			{
+			  //cria um Jmp para o inicio da funcao
+			  			}
 
-	// Um argumento
-	Vector<Instrucao> Parm(/*Função f, int n*/) :
-	{
-		Vector<Instrucao> p = new Vector<Instrucao>(0);
-		Vector<Instrucao> x = new Vector<Instrucao>(0);
-	}
-	{
-		x = Expressão() {
-			return p;
+			ondeEstou = rotaAnterior;
+			
+			return x;
 		}
-		
-	}
-
-	// Lista para impressão
-	Vector<Instrucao> ListPrint() :
-	{
-		Vector<Instrucao> p = new Vector<Instrucao>(0);
-		Vector<Instrucao> x = new Vector<Instrucao>(0);
-	}
-	{
-		x=ItemPrint() {
-			p.addAll(x);
-		}
-		
-		(
-		 ","
-		 x=ItemPrint() {
-			 p.addAll(x);
-		 }
-		)*
-		{ return p;}
-	}
-
-	// Um ítem a ser impresso
-	Vector<Instrucao> ItemPrint() :
-	{
-		Vector<Instrucao> p = new Vector<Instrucao>(0);
-		Vector<Instrucao> x = new Vector<Instrucao>(0);
-		Token t;
-	}
-	{
-		(
-		 x=Expressão() {
-		 }
-		 |
-		 t=<STRING_LITERAL> {}
-		)
-		{ return p;}
 	}
 
 	// Definição dos tokens
-	TOKEN :
-	{
-	 < NUM: ( ["0"-"9"] )+ >
-	|
-	 < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9","@"] )* >
-	|
-	  <STRING_LITERAL: "\"" ( ~["\"","\\","\n","\r"] | "\\" ( ["n","t","b","r","f","\\","\'","\""] | ["0"-"7"] (["0"-"7"])?  | ["0"-"3"] ["0"-"7"] ["0"-"7"] | ( ["\n","\r"] | "\r\n")))* "\"">
-
-	}
+	TOKEN :{<PALAVRA : (["a"-"z"])+ >}
+	
+	TOKEN :{< NUM: ( ["0"-"9"] )+ >}
+	
+	TOKEN :{< ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9","@"] )* >}
+	
+	TOKEN :{<STRING_LITERAL: "\"" ( ~["\"","\\","\n","\r"] | "\\" ( ["n","t","b","r","f","\\","\'","\""] | ["0"-"7"] (["0"-"7"])?  | ["0"-"3"] ["0"-"7"] ["0"-"7"] | ( ["\n","\r"] | "\r\n")))* "\"">}
 
 
 
