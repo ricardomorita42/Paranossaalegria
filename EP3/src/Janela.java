@@ -130,10 +130,13 @@ public class Janela extends JFrame implements ActionListener {
 			if (mapa.timeRobos().get(i) instanceof Base1) {
 				menuItem = new JMenuItem(mapa.nomeRobos().get(i));
 				menuItem.addActionListener(new ActionListener() {
-
+					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						JOptionPane.showInputDialog("teste");
+						isPaused = true;
+						String s = (String)JOptionPane.showInputDialog("Escolha um novo programa para este robo");
+						System.out.println(s);
+						isPaused = false;
 					}
 					
 				});
@@ -154,7 +157,10 @@ public class Janela extends JFrame implements ActionListener {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						JOptionPane.showInputDialog("teste");
+						isPaused = true;
+						String s = (String)JOptionPane.showInputDialog("Escolha um novo programa para este robo");
+						System.out.println(s);
+						isPaused = false;
 					}
 					
 				});
