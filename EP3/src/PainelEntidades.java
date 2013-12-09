@@ -85,6 +85,11 @@ public class PainelEntidades extends JPanel implements ActionListener {
 						g2d.setFont(new Font("Monospace", Font.BOLD, 9));
 						g2d.drawString(String.valueOf(((Robo)entidade).getAcaoAtual()), x-(int)(r/2), y-(int)(r)+erroY);
 						Toolkit.getDefaultToolkit().sync();
+						
+						g2d.setColor(Color.ORANGE);
+						g2d.setFont(new Font("Monospace", Font.BOLD, 12));
+						g2d.drawString(String.valueOf(((Robo)entidade).getNome().toUpperCase().subSequence(0, 3)), x-(int)(r/2), y+(int)(r)+erroY+2);
+						Toolkit.getDefaultToolkit().sync();
 					}
 					
 					else if (entidade instanceof Cristal){

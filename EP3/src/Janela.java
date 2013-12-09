@@ -135,7 +135,9 @@ public class Janela extends JFrame implements ActionListener {
 					public void actionPerformed(ActionEvent arg0) {
 						isPaused = true;
 						String s = (String)JOptionPane.showInputDialog("Escolha um novo programa para este robo");
-						System.out.println(s);
+						if (s != null) {
+							System.out.println(s);
+						}
 						isPaused = false;
 					}
 					
@@ -159,7 +161,9 @@ public class Janela extends JFrame implements ActionListener {
 					public void actionPerformed(ActionEvent arg0) {
 						isPaused = true;
 						String s = (String)JOptionPane.showInputDialog("Escolha um novo programa para este robo");
-						System.out.println(s);
+						if (s != null) {
+							System.out.println(s);
+						}
 						isPaused = false;
 					}
 					
