@@ -103,7 +103,7 @@ public class Arena implements Empilhavel{
 			comp = listaBase1.size();
 			
 			do {
-				i = rand.nextInt(1/*comp*/); //Aleatório caso descomente comp
+				i = rand.nextInt(comp); //Aleatório caso descomente comp
 				celula = listaBase1.get(i);
 				// Enquanto a posição sorteada for um terreno Ocupado,
 				// Sorteie outra posição.
@@ -117,7 +117,7 @@ public class Arena implements Empilhavel{
 			comp = listaBase2.size();
 			
 			do {
-				i = rand.nextInt(1/*comp*/); //Aleatório caso descomente comp
+				i = rand.nextInt(comp); //Aleatório caso descomente comp
 				celula = listaBase2.get(i);
 				// Enquanto a posição sorteada for um terreno Ocupado,
 				// Sorteie outra posição.
@@ -169,6 +169,25 @@ public class Arena implements Empilhavel{
 	 * [Depositar, direção]
 	 * [Atacar, direção]
 	 */
+	
+	public ArrayList<String> nomeRobos() {
+		ArrayList<String> nomes = new ArrayList<String>(listaRobos.size());
+		for (int i = 0; i < listaRobos.size(); i++) {
+			nomes.add(listaRobos.get(i).getNome());
+		}
+		
+		return nomes;
+	}
+	
+	public ArrayList<Base> timeRobos() {
+		ArrayList<Base> bases = new ArrayList<Base>(listaRobos.size());
+		for (int i = 0; i < listaRobos.size(); i++) {
+			bases.add(listaRobos.get(i).getBase());
+		}
+		
+		return bases;
+	}
+	
 	public int sistema(Operacao op, Robo robo) {
 		int isImpar = 0;
 		

@@ -10,12 +10,12 @@ public class Teste {
 			
 		final Arena arenaPrincipal = new Arena();
 		
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 4; i++) {
 			teste = new Programa2();
 			arenaPrincipal.insereExercito(teste.getPrograma(arenaPrincipal), new Base1());
 		}
 		
-		for (int i = 0; i < 0; i++) {
+		for (int i = 0; i < 4; i++) {
 			teste = new Programa2();
 			arenaPrincipal.insereExercito(teste.getProgramaAttack(arenaPrincipal), new Base2());
 		}

@@ -23,7 +23,7 @@ public class Janela extends JFrame implements ActionListener {
 		super(nome);
 		
 		//Criando um menu
-		createMenu();
+		createMenu(mapa);
 		
 		//Preparando o frame básico do jogo
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,7 +72,7 @@ public class Janela extends JFrame implements ActionListener {
 	}
 	
 	//Função que efetivamente cria o menu
-	private void createMenu() {
+	private void createMenu(Arena mapa) {
 		menuBar = new JMenuBar();
 		menu = new JMenu("Game");
 		menu.setMnemonic(KeyEvent.VK_G);
@@ -119,6 +119,50 @@ public class Janela extends JFrame implements ActionListener {
 		});
 		menu.add(menuItem);
 		
+		menu = new JMenu("Base Azul");
+		menu.setMnemonic(KeyEvent.VK_A);
+		menu.getAccessibleContext().setAccessibleDescription("Robos do time azul");
+		menuBar.add(menu);
+		
+		int x = mapa.nomeRobos().size();
+		
+		for (int i = 0; i < x; i++)  {
+			if (mapa.timeRobos().get(i) instanceof Base1) {
+				menuItem = new JMenuItem(mapa.nomeRobos().get(i));
+				menuItem.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						JOptionPane.showInputDialog("teste");
+					}
+					
+				});
+				menu.add(menuItem);
+			}
+		}
+		
+		
+		menu = new JMenu("Base Vermelha");
+		menu.setMnemonic(KeyEvent.VK_V);
+		menu.getAccessibleContext().setAccessibleDescription("Robos do time vermelho");
+		menuBar.add(menu);
+		
+		for (int i = 0; i < x; i++)  {
+			if (mapa.timeRobos().get(i) instanceof Base2) {
+				menuItem = new JMenuItem(mapa.nomeRobos().get(i));
+				menuItem.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						JOptionPane.showInputDialog("teste");
+					}
+					
+				});
+				menu.add(menuItem);
+			}
+		}
+		
+		
 		setJMenuBar(menuBar);
 	}
 	
@@ -150,6 +194,5 @@ public class Janela extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 }
